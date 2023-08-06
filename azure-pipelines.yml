@@ -3,15 +3,22 @@
 # Add steps that run tests, create a NuGet package, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
-trigger:
-- main
+trigger: none
 
 pool:
   vmImage: ubuntu-latest
 
-variables:
-  buildConfiguration: 'Release'
-
-steps:
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
+jobs:
+  - job: Deploy
+    steps:
+      - task: AzureResourceManagerTemplateDeployment@3
+        inputs:
+          deploymentScope: 'Resource Group'
+          azureResourceManagerConnection: 'iacproject'
+          subscriptionId: '4486fa46-3cd2-4b09-b7e0-5890f333fc71'
+          action: 'Create Or Update Resource Group'
+          resourceGroupName: 'iacproject'
+          location: 'Canada Central'
+          templateLocation: 'URL of the file'
+          csmFileLink: 'https://github.com/chikenadobo/iacproject-jc/blob/main/main.bicep'
+          deploymentMode: 'Incremental'
